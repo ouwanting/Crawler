@@ -1,0 +1,53 @@
+# Crawler
+#crawler some pictures
+
+import urllib.request   #urllib.request模块提供了读取web页面数据的接口
+import re    #re模块主要包含正则表达式
+
+import os
+
+def getHtml(url):
+
+    page = urllib.request.urlopen(url)  #urllib.request.urlopen()方法用于打开一个URL地址
+    
+    html = page.read()  #read()方法用于读取url上的数据
+    return html.decode("utf-8")
+
+
+def getImg(html):
+
+    reg = r'src="(.+?\.jpg)" pic_ext'  #正则表达式，得到图片地址
+    
+    imgre = re.compile(reg)#re.compile()可以把正则表达式编译成一个正则表达式对象
+   
+    imglist = imgre.findall(html)
+    #re.findall()方法读取html中包含imgre的数据
+    
+
+    x = 0  #把筛选的图片地址通过for循环遍历并保存到本地
+    
+
+    #核心是urllib.urlretrieve()方法，直接将远程数据下载到本地，
+    #图片通过x依次递增命名
+    
+    path = "F:\Python\抓取图片"
+    
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    path = path+"\\"
+    
+
+    
+    for imgurl in imglist:
+        
+        urllib.request.urlretrieve(imgurl,"{}{}.jpg".format(path,x))
+        #打开imglist中保存的图片网址，并下载图片保存在本地，format格式化字符串
+
+        
+        x += 1
+    return imglist
+
+
+html = getHtml("https://tieba.baidu.com/p/2460150866?pn=9")
+
+print (getImg(html))
